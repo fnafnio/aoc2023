@@ -1,0 +1,25 @@
+[package]
+authors = ["Fabio Pungg <fabiopungg@gmail.com>"]
+edition = "2021"
+name = "aoc2023"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.75"
+camino = "1.1.6"
+clap = {version = "4.4.10", features = ["derive"]}
+color-eyre = "0.6.2"
+derive_more = "0.99.17"
+itertools = "0.12.0"
+nom = "7.1.3"
+pathfinding = "4.4.0"
+thiserror = "1.0.50"
+
+[lib]
+bench = false
+
+[dev-dependencies]
+assert_ok = "1.0.2"
+test-case = "3.3.1"
