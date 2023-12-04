@@ -1,6 +1,7 @@
 use core::borrow;
 use std::{fmt::Display, ops::Range};
 
+use color_eyre::eyre::eyre;
 use pathfinding::num_traits::Num;
 use regex::{Match, Regex};
 
@@ -9,11 +10,14 @@ use crate::{Result, Solver};
 pub struct Day;
 
 impl Solver for Day {
-    fn part_1(&self, input: &str) ->  Result<String>  {
-        todo!()
+    fn part_1(&self, input: &str) -> Result<String> {
+        let schem = Schematic::create(input);
+        let nums = schem.get_numbers();
+        let cnt = count_part_numbers(nums, schem);
+        Ok(cnt.to_string())
     }
 
-    fn part_2(&self, input: &str) ->  Result<String>  {
+    fn part_2(&self, input: &str) -> Result<String> {
         todo!()
     }
 }
@@ -78,7 +82,6 @@ impl<'a> Schematic<'a> {
     }
 
     fn get_value(&self, n: &Number) -> usize {
-        println!("{n}");
         let &s = self.data.get(n.line).unwrap();
         (s[n.start..n.end].parse()).unwrap()
     }
@@ -90,16 +93,34 @@ impl<'a> Schematic<'a> {
         let btm = (n.line + 1).min(self.size.1);
         let mut v = vec![];
         for i in top..btm + 1 {
-            println!("{i}");
-            let &s = self.data.get(i).unwrap();
-            v.push(&s[start..end]);
+            if let Some(&s) = self.data.get(i) {
+                v.push(&s[start..end]);
+            }
         }
-        dbg!(v)
+        v
     }
+}
+
+fn count_part_numbers(nums: Vec<Number>, schem: Schematic<'_>) -> usize {
+    let mut cnt = 0;
+    for n in nums.iter() {
+        let area = schem.get_neighbors(n);
+        if area
+            .iter()
+            .flat_map(|s| s.chars())
+            .filter(|c| !c.is_ascii_digit())
+            .any(|c| c != '.')
+        {
+            cnt += schem.get_value(n);
+        }
+    }
+    cnt
 }
 
 #[cfg(test)]
 mod tests {
+    use assert_ok::assert_ok;
+
     use super::*;
     const INPUT: &str = r#"467..114..
 ...*......
@@ -116,18 +137,7 @@ mod tests {
     fn part_1() {
         let schem = Schematic::create(INPUT);
         let nums = schem.get_numbers();
-        let mut cnt = 0;
-        for n in nums.iter() {
-            let area = schem.get_neighbors(n);
-            if area
-                .iter()
-                .flat_map(|s| s.chars())
-                .filter(|c| !c.is_ascii_digit())
-                .any(|c| c != '.')
-            {
-                cnt += schem.get_value(n);
-            }
-        }
+        let cnt = count_part_numbers(nums, schem);
         assert_eq!(4361, cnt)
     }
 }
