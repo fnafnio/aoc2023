@@ -15,5 +15,19 @@ impl Solver for Day {
 #[cfg(test)]
 mod tests {
     use super::*;
-    const INPUT: &str = "";
+    const INPUT: &str = r#"467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."#;
+
+#[test]
+fn part_1() {
+    
+}
 }
