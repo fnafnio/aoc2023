@@ -29,6 +29,7 @@ impl Solver for Day {
 
 fn get_cal_value<S: AsRef<str>>(l: S) -> i32 {
     let l = l.as_ref();
+    dbg!(l);
     let first = l.chars().find(char::is_ascii_digit).unwrap();
     let last = l.chars().rev().find(char::is_ascii_digit).unwrap();
 
@@ -100,6 +101,8 @@ fn replace_line(l: &str) -> String {
 #[cfg(test)]
 mod tests {
 
+    use std::fs::File;
+
     use super::*;
     const INPUT: &str = r#"1abc2
 pqr3stu8vwx
@@ -126,6 +129,26 @@ treb7uchet"#;
             .map(get_cal_value)
             .sum();
         assert_eq!(142, a);
+    }
+
+    #[test]
+    fn out_part_2() {
+        let file = File::create("day1_out2").unwrap();
+        let mut new = String::new();
+        let num: i32 = include_str!("../../input/day_1")
+            .lines()
+            .filter(|l| !l.is_empty())
+            .map(|l| {
+                let r = replace_line(l);
+                new.push_str(&format!("{l:60 } -> {r:>60 }"));
+                let i = get_cal_value(r);
+                new.push_str(&format!(" = {i:02}\n"));
+                i
+            })
+            .sum();
+        // assert_eq!(423, num);
+        println!("Result is {num}");
+        std::fs::write("day1_out2", new);
     }
 
     #[test]
