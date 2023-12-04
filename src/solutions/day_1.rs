@@ -112,7 +112,11 @@ abcone2threexyz
 xtwone3four
 4nineeightseven2
 zoneight234
-7pqrstsixteen"#;
+7pqrstsixteen
+1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet"#;
 
     #[test]
     fn test_part_1() {
@@ -132,6 +136,6 @@ zoneight234
             .map(|l| dbg!(replace_line(dbg!(l))))
             .map(|l| get_cal_value(dbg!(l)))
             .sum();
-        assert_eq!(281, num);
+        assert_eq!(423, num);
     }
 }
