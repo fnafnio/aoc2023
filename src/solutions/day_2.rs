@@ -1,6 +1,7 @@
 use std::ops::{Add, AddAssign};
 
-use crate::Solver;
+use crate::{Result, Solver};
+use color_eyre::eyre::{anyhow, eyre};
 use derive_more::{Add, AddAssign};
 
 use self::parser::game_parser;
@@ -8,12 +9,12 @@ use self::parser::game_parser;
 pub struct Day;
 
 impl Solver for Day {
-    fn part_1(&self, input: &str) -> String {
-        solve_part_1(input).to_string()
+    fn part_1(&self, input: &str) -> Result<String> {
+        Ok(solve_part_1(input)?.to_string())
     }
 
-    fn part_2(&self, input: &str) -> String {
-        solve_part_2(input).to_string()
+    fn part_2(&self, input: &str) -> Result<String> {
+        Ok(solve_part_2(input)?.to_string())
     }
 }
 #[derive(Debug, Default)]
@@ -136,24 +137,27 @@ mod parser {
     }
 }
 
-fn solve_part_1(input: &str) -> usize {
+fn solve_part_1(input: &str) -> color_eyre::eyre::Result<usize> {
     let mut cnt = 0;
     for l in input.lines() {
-        let (_, game) = parser::game_parser(l).unwrap();
+        let game = match parser::game_parser(l) {
+            Ok((_, g)) => g,
+            Err(e) => return Err(eyre!("failed to parse a line {l}")),
+        };
         if game.is_valid() {
             cnt += game.id;
         }
     }
-    cnt
+    Ok(cnt)
 }
 
-fn solve_part_2(input: &str) -> usize {
-    let mut cnt = 0;
-    input
+fn solve_part_2(input: &str) -> Result<usize> {
+    let sum = input
         .lines()
         .filter(|l| !l.is_empty())
         .map(|l| game_parser(l).unwrap().1.fewest_cubes().product())
-        .sum()
+        .sum();
+    Ok(sum)
 }
 
 #[cfg(test)]
@@ -170,13 +174,13 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"#;
 
     #[test]
     fn test_part_1() {
-        let cnt = solve_part_1(INPUT);
+        let cnt = assert_ok!(solve_part_1(INPUT));
         assert_eq!(8, cnt);
     }
 
     #[test]
     fn test_part_2() {
-        let cnt = solve_part_2(INPUT);
+        let cnt = assert_ok!(solve_part_2(INPUT));
         assert_eq!(2286, cnt);
     }
 }

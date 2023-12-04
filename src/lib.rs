@@ -3,8 +3,8 @@
 #![feature(int_roundings)]
 #![feature(exclusive_range_pattern)]
 
-use color_eyre::eyre;
-use eyre::{anyhow, Error};
+use color_eyre::eyre::{eyre, Error, Result};
+// use eyre::{anyhow, Error};
 
 use solutions::*;
 
@@ -16,7 +16,7 @@ const SOLVERS: &[&dyn Solver] = &[
     &Day14, &Day15, &Day16, &Day17, &Day18, &Day19, &Day20, &Day21, &Day22, &Day23, &Day24, &Day25,
 ];
 
-pub fn run_solver(day: Day, part: Part, input: &str) -> String {
+pub fn run_solver(day: Day, part: Part, input: &str) -> Result<String> {
     // assert!(day < SOLVERS.len() && day > 0);
     // let day = day - 1;
 
@@ -41,7 +41,7 @@ impl TryFrom<usize> for Part {
         match value {
             1 => Ok(Part::Part1),
             2 => Ok(Part::Part2),
-            _ => Err(anyhow!("Part can only be 1 or 2")),
+            _ => Err(eyre!("Part can only be 1 or 2")),
         }
     }
 }
@@ -60,9 +60,9 @@ impl TryFrom<usize> for Day {
 
     fn try_from(value: usize) -> Result<Self, Self::Error> {
         match value {
-            0 => Err(anyhow!("So, day 0 you say?")),
+            0 => Err(eyre!("So, day 0 you say?")),
             x @ 1..=25 => Ok(Day(x)),
-            _ => Err(anyhow!("Missed Christmas this year?")),
+            _ => Err(eyre!("Missed Christmas this year?")),
         }
     }
 }
@@ -76,10 +76,10 @@ impl std::ops::Deref for Day {
 }
 
 pub trait Solver {
-    fn part_1(&self, input: &str) -> String;
-    fn part_2(&self, input: &str) -> String;
+    fn part_1(&self, input: &str) -> Result<String>;
+    fn part_2(&self, input: &str) -> Result<String>;
 
-    fn run_part(&self, input: &str, part: Part) -> String {
+    fn run_part(&self, input: &str, part: Part) -> Result<String> {
         match part {
             Part::Part1 => self.part_1(input),
             Part::Part2 => self.part_2(input),

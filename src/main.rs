@@ -26,7 +26,7 @@ fn main() -> color_eyre::Result<()> {
     let input = std::fs::read_to_string(cli.path)?;
     let inner = Instant::now();
 
-    let result = run_solver(day, part, &input);
+    let result = run_solver(day, part, &input)?;
 
     let inner = inner.elapsed();
     let elapsed = total.elapsed();
