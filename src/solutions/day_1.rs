@@ -67,17 +67,16 @@ fn get_cal_value_2(l: &str) -> i32 {
 }
 
 fn replace_line(l: &str) -> String {
-    let re = Regex::new(r#"\W*(zero|one|two|three|four|five|six|seven|eight|nine)\W*"#).unwrap();
+    let re = Regex::new(r#"(zero|one|two|three|four|five|six|seven|eight|nine)"#).unwrap();
     let mut new = String::new();
 
     // Use the regex replace method to replace the matched words with their corresponding digits
     let result = re.replace_all(l, |captures: &regex::Captures| {
-        // if let Some(x) = captures.get(1) {
-        //     return x.as_str().to_owned();
-        // }
-        match captures.get(1) {
+        let get = captures.get(1);
+        match get {
             Some(x) => {
                 match x.as_str() {
+                    "zero" => "0",
                     "one" => "1",
                     "two" => "2",
                     "three" => "3",
@@ -88,7 +87,7 @@ fn replace_line(l: &str) -> String {
                     "eight" => "8",
                     "nine" => "9",
                     // Add more mappings as needed
-                    _ => "", // _ => captures.get(0).unwrap().as_str(), // Return the original if no match
+                    x => x, // _ => captures.get(0).unwrap().as_str(), // Return the original if no match
                 }
             }
             None => "",
@@ -124,23 +123,15 @@ zoneight234
             .sum();
         assert_eq!(142, a);
     }
+
     #[test]
     fn test_part2() {
         let num: i32 = INPUT_2
             .lines()
             .filter(|l| !l.is_empty())
-            .map(replace_line)
-            .map(get_cal_value)
+            .map(|l| dbg!(replace_line(dbg!(l))))
+            .map(|l| get_cal_value(dbg!(l)))
             .sum();
         assert_eq!(281, num);
     }
-
-    // #[bench]
-    // fn bench_variant_1(b: &mut Bencher) {
-    //     // Specify the code to benchmark inside the closure passed to iter
-    //     let input = include_str!("../../input/day_1");
-    //     b.iter(|| {
-    //         let num = .lines().map(|l| get_cal_value(l)).sum();
-    //     });
-    // }
 }
