@@ -2,6 +2,7 @@
 #![feature(binary_heap_drain_sorted)]
 #![feature(int_roundings)]
 #![feature(exclusive_range_pattern)]
+#![feature(iterator_try_collect)]
 
 use color_eyre::eyre::{eyre, Error, Result};
 // use eyre::{anyhow, Error};
