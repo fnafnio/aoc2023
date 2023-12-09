@@ -6,20 +6,25 @@ pub struct Day;
 
 impl Solver for Day {
     fn part_1(&self, input: &str) -> Result<String> {
-        let sum: usize = input
-            .lines()
-            .filter_map(|l| Card::parse(l).ok())
-            .map(|c| match c.count_winners() {
-                x @ 0..1 => x,
-                x => 1 << x - 1,
-            })
-            .sum();
+        let sum = solve_part_1(input);
         Ok(sum.to_string())
     }
 
     fn part_2(&self, input: &str) -> Result<String> {
         todo!()
     }
+}
+
+fn solve_part_1(input: &str) -> usize {
+    let sum: usize = input
+        .lines()
+        .map(|l| Card::parse(l).unwrap())
+        .map(|c| match c.count_winners() {
+            x @ 0..1 => x,
+            x => 1 << x - 1,
+        })
+        .sum();
+    sum
 }
 
 #[derive(Debug)]
@@ -57,12 +62,12 @@ mod parser {
     };
 
     pub(super) fn parser(input: &str) -> IResult<&str, Card> {
-        let (input, num) = delimited(tag("Card "), digit1, tag(":"))(input)?;
+        let (input, num) = delimited(pair(tag("Card"), space0), digit1, tag(":"))(input)?;
         let num = num.parse().unwrap(); // because we are sure to only have digits
         let (input, _) = space0(input)?;
         let (input, (winners, have)) = separated_pair(
             separated_list1(space1, digit1),
-            tag(" | "),
+            delimited(space0, tag("|"), space0),
             separated_list1(space1, digit1),
         )(input)?;
         let winners = winners.into_iter().collect();
@@ -70,6 +75,7 @@ mod parser {
         Ok((input, Card { num, winners, have }))
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -81,8 +87,6 @@ Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
 Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"#;
 
-    const DAY: Day = Day;
-
     #[test]
     fn parser() {
         for l in INPUT.lines() {
@@ -92,7 +96,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"#;
 
     #[test]
     fn winners() {
-        let sum = assert_ok!(Day.part_1(INPUT));
+        let sum = solve_part_1(INPUT);
         assert_eq!(13, sum)
     }
 }
