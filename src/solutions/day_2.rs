@@ -1,6 +1,7 @@
 use std::ops::{Add, AddAssign};
 
-use crate::{Result, Solver};
+use crate::Solver;
+use color_eyre::eyre::Result;
 use color_eyre::eyre::{anyhow, eyre};
 use derive_more::{Add, AddAssign};
 

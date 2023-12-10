@@ -1,4 +1,5 @@
-use crate::{Result, Solver};
+use crate::Solver;
+use color_eyre::eyre::Result;
 
 pub struct Day;
 

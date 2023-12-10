@@ -5,7 +5,8 @@ use color_eyre::eyre::eyre;
 use pathfinding::num_traits::Num;
 use regex::{Match, Regex};
 
-use crate::{Result, Solver};
+use crate::Solver;
+use color_eyre::eyre::Result;
 
 pub struct Day;
 
