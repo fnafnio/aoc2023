@@ -10,7 +10,8 @@ impl Solver for Day {
     }
 
     fn part_2(&self, input: &str) -> Result<String> {
-        todo!()
+        let result = solve_part_2(input)?;
+        Ok(result.to_string())
     }
 }
 
@@ -28,7 +29,6 @@ impl<'a> Map<'a> {
             .iter()
             .filter(|r| r.in_range(input))
             .fold(input, |mut i, r| r.transform(i));
-        println!("\t{:14}->{:14}:{input}->{fold}", self.src, self.dst);
         fold
     }
 }
@@ -48,7 +48,6 @@ impl Range {
 
     fn transform(&self, input: usize) -> usize {
         let Range { dst, src, len } = &self;
-        println!("\t\t{src:2} -> {dst:2} : {len:2}");
         if self.in_range(input) {
             input - *src + *dst
         } else {
@@ -65,7 +64,28 @@ fn solve_part_1(input: &str) -> Result<usize> {
         .iter()
         .map(|&s| {
             let fold = maps.iter().fold(s, |s, m| m.transform_all(s));
-            println!("{s}->{fold}");
+            fold
+        })
+        .min()
+        .ok_or(eyre!("no min element found"))?;
+
+    Ok(min)
+}
+
+fn solve_part_2(input: &str) -> Result<usize> {
+    let (_, (seeds, maps)) =
+        parse_input(input).map_err(|e| eyre!("Error parsing input: {:?}", e))?;
+
+    let seeds = seeds
+        .iter()
+        .step_by(2)
+        .zip(seeds.iter().skip(1).step_by(2))
+        .map(|(&s, &l)| s..s + l)
+        .flatten();
+
+    let min = seeds
+        .map(|s| {
+            let fold = maps.iter().fold(s, |s, m| m.transform_all(s));
             fold
         })
         .min()
@@ -175,6 +195,11 @@ humidity-to-location map:
     fn part_1() {
         let x = assert_ok!(solve_part_1(INPUT));
         assert_eq!(x, 35)
+    }
+    #[test]
+    fn part_2() {
+        let x = assert_ok!(solve_part_2(INPUT));
+        assert_eq!(x, 46)
     }
 
     #[test]
