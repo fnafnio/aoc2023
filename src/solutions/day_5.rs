@@ -72,6 +72,10 @@ fn solve_part_1(input: &str) -> Result<usize> {
     Ok(min)
 }
 
+use rayon::iter::{ParallelIterator, ParallelBridge};
+
+// this is a brute force appproach, just do it for every number ever
+// it could be drastically improved by building a search over ranges, starting at the end
 fn solve_part_2(input: &str) -> Result<usize> {
     let (_, (seeds, maps)) =
         parse_input(input).map_err(|e| eyre!("Error parsing input: {:?}", e))?;
@@ -83,7 +87,7 @@ fn solve_part_2(input: &str) -> Result<usize> {
         .map(|(&s, &l)| s..s + l)
         .flatten();
 
-    let min = seeds
+    let min = seeds.par_bridge()
         .map(|s| {
             let fold = maps.iter().fold(s, |s, m| m.transform_all(s));
             fold
