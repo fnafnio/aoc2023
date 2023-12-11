@@ -50,7 +50,7 @@ mod parser {
 
     pub(super) fn parse_part_2(input: &str) -> super::Result<(usize, usize)> {
         let (_, (t, d)) =
-            parse_part2_line(input).map_err(|e| eyre!("Error parsing input: {:?}", e))?;
+            parse_part_2(input).map_err(|e| eyre!("Error parsing input: {:?}", e))?;
         Ok((t, d))
     }
 
@@ -64,7 +64,7 @@ mod parser {
         Ok((input, collect))
     }
 
-    fn parse_part2_line(input: &str) -> IResult<&str, (usize, usize)> {
+    fn parse_part_2(input: &str) -> IResult<&str, (usize, usize)> {
         let (input, t) = parse_line_part2(input)?;
         let (input, _) = opt(line_ending)(input)?;
         let (input, d) = parse_line_part2(input)?;
